@@ -15,3 +15,6 @@ packages/vision-core/models/*
 
 # emsdk kalau ke-clone di dalam repo (harusnya di luar repo, tapi jaga-jaga)
 emsdk/
+
+
+backup/
