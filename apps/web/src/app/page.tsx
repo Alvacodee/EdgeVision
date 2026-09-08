@@ -1,35 +1,56 @@
 'use client';
 
-import { useEffect } from 'react';
-import { VisionEngine } from '@/lib/wasm/vision-engine';
-
-async function testEngine() {
-  const engine = new VisionEngine();
-  await engine.init(640, 480);
-
-  const img = await createImageBitmap(await (await fetch('/test-bus.jpg')).blob());
-  const scale = Math.min(640 / img.width, 480 / img.height);
-  const w = Math.round(img.width * scale);
-  const h = Math.round(img.height * scale);
-
-  const canvas = new OffscreenCanvas(w, h);
-  const ctx = canvas.getContext('2d')!;
-  ctx.drawImage(img, 0, 0, w, h);
-  const { data } = ctx.getImageData(0, 0, w, h);
-
-  const detections = engine.detect(data, w, h, 0.5);
-  console.log(`Ketemu ${detections.length} deteksi (frame ${w}x${h}):`);
-  detections.forEach(d =>
-    console.log(`  class=${d.classId} score=${d.score.toFixed(2)} bbox=[${d.x.toFixed(0)},${d.y.toFixed(0)},${d.w.toFixed(0)},${d.h.toFixed(0)}]`)
-  );
-
-  engine.dispose();
-}
+import { useState } from 'react';
+import { useDetectionWorker } from '@/features/detection/hooks/useDetectionWorker';
+import { useCamera } from '@/features/detection/hooks/useCamera';
+import { useFrameCapture } from '@/features/detection/hooks/useFrameCapture';
+import { CameraView } from '@/components/vision/CameraView';
+import { Controls } from '@/components/vision/Controls';
+import { DEFAULT_THRESHOLD } from '@/features/detection/types';
 
 export default function Page() {
-  useEffect(() => {
-    testEngine();
-  }, []);
+  const {
+    status: engineStatus,
+    error: engineError,
+    detections,
+    frameSize,
+    sendFrame,
+    isBusy,
+  } = useDetectionWorker();
+  const { videoRef, status: cameraStatus, start, stop } = useCamera();
+  const [threshold, setThreshold] = useState(DEFAULT_THRESHOLD);
 
-  return <div>Cek console untuk hasil smoke test.</div>;
+  const active = cameraStatus === 'active' && engineStatus === 'ready';
+
+  const { fps } = useFrameCapture({
+    videoRef,
+    sendFrame,
+    isBusy,
+    threshold,
+    active,
+  });
+
+  return (
+    <div className="flex flex-col items-center gap-4 p-6">
+      <h1 className="text-xl font-semibold">EdgeVision</h1>
+
+      <CameraView
+        videoRef={videoRef}
+        detections={active ? detections : []}
+        frameSize={active ? frameSize : null}
+      />
+
+      <Controls
+        cameraStatus={cameraStatus}
+        engineStatus={engineStatus}
+        threshold={threshold}
+        fps={fps}
+        onThresholdChange={setThreshold}
+        onStart={start}
+        onStop={stop}
+      />
+
+      {engineError && <p className="text-sm text-red-500">{engineError}</p>}
+    </div>
+  );
 }

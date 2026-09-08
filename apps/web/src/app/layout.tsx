@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EdgeVision — Tooling Check",
-  description: "Fase 0: validasi pipeline C++ -> Wasm -> Next.js",
+  title: "EdgeVision — Real-time Object Detection",
+  description: "Deteksi objek real-time 100% di browser, tanpa server, via WebAssembly.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

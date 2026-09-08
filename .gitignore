@@ -1,69 +1,17 @@
-# Prerequisites
-*.d
+# build output C++ (native & wasm)
+packages/vision-core/build-native/
+packages/vision-core/build-wasm/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# hasil visual CLI harness (Fase 1) — generated, bukan source
+packages/vision-core/output/
 
-# Precompiled Headers
-*.gch
-*.pch
+# hasil build wasm yang di-copy ke Next.js — di-generate scripts/build-wasm.sh
+apps/web/public/wasm/*
+!apps/web/public/wasm/.gitkeep
 
-# Linker files
-*.ilk
+# model ONNX — didownload via scripts/download-models.sh (Fase 1), jangan di-commit
+packages/vision-core/models/*
+!packages/vision-core/models/.gitkeep
 
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
-
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# Build directories
-build/
-Build/
-build-*/
-
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-install_manifest.txt
-compile_commands.json
-
-# Temporary files
-*.tmp
-*.log
-*.bak
-*.swp
-
-# vcpkg
-vcpkg_installed/
-
-# debug information files
-*.dwo
-
-# test output & cache
-Testing/
-.cache/
+# emsdk kalau ke-clone di dalam repo (harusnya di luar repo, tapi jaga-jaga)
+emsdk/
