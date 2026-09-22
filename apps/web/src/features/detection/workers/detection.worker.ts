@@ -28,7 +28,7 @@ function post(msg: WorkerToMainMessage) {
 
 self.onmessage = async (event: MessageEvent<MainToWorkerMessage>) => {
   const msg = event.data;
-
+  
   switch (msg.type) {
     case 'init': {
       try {
